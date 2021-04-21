@@ -17,8 +17,8 @@ import serial.protocols.i2c as i2c
 import si7006 show *
 
 main:
-  sda := gpio.Pin --input --output 17
-  scl := gpio.Pin --input --output 16
+  sda := gpio.Pin 17
+  scl := gpio.Pin 16
   bus := i2c.Bus --sda=sda --scl=scl --frequency=100_000
   sensor_device := bus.device Si7006A20.I2C_ADDRESS
   driver := Si7006A20 sensor_device

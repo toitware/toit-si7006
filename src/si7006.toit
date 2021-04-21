@@ -12,19 +12,19 @@ Driver for Si7006-A20 I2C Humidity and Temperature Sensor
 Example of use:
 ```
 main:
-  sda := gpio.Pin --input --output 17
-  scl := gpio.Pin --input --output 16
+  sda := gpio.Pin 17
+  scl := gpio.Pin 16
   bus := i2c.Bus --sda=sda --scl=scl --frequency = 100_000
   sensor_device := bus.device Si7006A20.I2C_ADDRESS
   driver := Si7006A20 sensor_device
   print "Firmware: $driver.firmware"
   print "Serial#: $(%016x driver.serial_number)"
-  print "Temperature: $(driver.temperature)C"
-  print "Humidity: $(driver.humidity)%"
+  print "Temperature: $(driver.read_temperature)C"
+  print "Humidity: $(driver.read_humidity)%"
 ```
 */
 class Si7006A20:
-  device_ /i2c.Device ::= ?
+  device_ /i2c.Device
   static I2C_ADDRESS ::= 0x40
 
   constructor .device_:
@@ -38,9 +38,10 @@ class Si7006A20:
 
   /// A string describing the firmware version on the sensor.
   firmware -> string:
-    // We can't use registers_.read_bytes because that assumes a 1-byte
-    // register number, but we have a two-byte register number. Instead
-    // simply write the two register bytes and then read a byte of data.
+    // Here and for the serial_number we can't use registers_.read_bytes
+    // because that assumes a 1-byte register number, but we have a two-byte
+    // register number. Instead simply write the two register bytes and then
+    // read a byte of data.
     device_.write #[0x84, 0xb8]
     bytes := device_.read 1
     code := bytes[0]
@@ -52,9 +53,7 @@ class Si7006A20:
     serial number that indicates it is not an Si7006 sensor.
   */
   serial_number -> int:
-    // We can't use registers_.read_bytes because that assumes a 1-byte
-    // register number, but we have a two-byte register number. Instead
-    // simply write the two register bytes and then read a byte of data.
+    // See comment in the firmware method.
     device_.write #[0xfa, 0x0f]
     bytes1 := device_.read 8
     device_.write #[0xfc, 0xc9]
@@ -100,14 +99,20 @@ class Si7006A20:
       time *= 2
 
   /// The current temperature of the sensor in degrees Celcius
-  temperature -> float:
+  read_temperature -> float:
     code := get_measurement_ 0xf3
     return ((175.72 * code) / 65536.0) - 46.85
 
   /// The current relative humidity measured by the sensor in percent.
-  humidity -> float:
+  read_humidity -> float:
     code := get_measurement_ 0xf5
     return ((125.0 * code) / 65536.0) - 6.0
+
+  /// Currently does nothing.
+  on -> none:
+
+  /// Currently does nothing.
+  off -> none:
 
 crc_8_ input/ByteArray polynomial/int --initial/int=0 -> int:
   result := initial
