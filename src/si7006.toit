@@ -98,7 +98,7 @@ class Si7006A20:
         return BIG_ENDIAN.uint16 bytes 0
       time *= 2
 
-  /// The current temperature of the sensor in degrees Celcius
+  /// The current temperature of the sensor in degrees Celsius
   read_temperature -> float:
     code := get_measurement_ 0xf3
     return ((175.72 * code) / 65536.0) - 46.85
