@@ -13,7 +13,7 @@ A simple usage example.
 ``` toit
 import fixed_point show *
 import gpio
-import serial.protocols.i2c as i2c
+import i2c
 import si7006 show *
 
 main:

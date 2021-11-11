@@ -1,6 +1,6 @@
 import binary show BIG_ENDIAN
 import serial
-import serial.protocols.i2c as i2c
+import i2c
 import gpio
 
 /// Driver for Si7006-A20 I2C Humidity and Temperature Sensor
