@@ -1,31 +1,32 @@
 import binary show BIG_ENDIAN
 import serial
-import i2c
 import gpio
 
 /// Driver for Si7006-A20 I2C Humidity and Temperature Sensor
 
+I2C_ADDRESS ::= 0x40
 
 /**
 Driver for Si7006-A20 I2C Humidity and Temperature Sensor
 
 Example of use:
 ```
+import si7006
+
 main:
   sda := gpio.Pin 17
   scl := gpio.Pin 16
-  bus := i2c.Bus --sda=sda --scl=scl --frequency = 100_000
-  sensor_device := bus.device Si7006A20.I2C_ADDRESS
-  driver := Si7006A20 sensor_device
+  bus := i2c.Bus --sda=sda --scl=scl --frequency=frequency
+  device := bus.device si7006.I2C_ADDRESS
+  driver := si7006.Driver device
   print "Firmware: $driver.firmware"
   print "Serial#: $(%016x driver.serial_number)"
   print "Temperature: $(driver.read_temperature)C"
   print "Humidity: $(driver.read_humidity)%"
 ```
 */
-class Si7006A20:
-  device_ /i2c.Device
-  static I2C_ADDRESS ::= 0x40
+class Driver:
+  device_ /serial.Device
 
   constructor .device_:
 
@@ -45,7 +46,7 @@ class Si7006A20:
     device_.write #[0x84, 0xb8]
     bytes := device_.read 1
     code := bytes[0]
-    return FIRMWARE_VERSIONS_[code] --if_absent:
+    return FIRMWARE_VERSIONS_.get code --if_absent=:
       "Unknown firmware version: $(%02x code)"
 
   /**

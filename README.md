@@ -14,18 +14,18 @@ A simple usage example.
 import fixed_point show *
 import gpio
 import i2c
-import si7006 show *
+import si7006
 
 main:
   sda := gpio.Pin 17
   scl := gpio.Pin 16
-  bus := i2c.Bus --sda=sda --scl=scl --frequency=100_000
-  sensor_device := bus.device Si7006A20.I2C_ADDRESS
-  driver := Si7006A20 sensor_device
+  bus := i2c.Bus --sda=sda --scl=scl --frequency=frequency
+  device := bus.device si7006.I2C_ADDRESS
+  driver := si7006.Driver device
   print "Firmware: $driver.firmware"
   print "Serial#: $(%016x driver.serial_number)"
-  print "Temperature: $(FixedPoint --decimals=1 driver.temperature)C"
-  print "Humidity: $(FixedPoint --decimals=1 driver.humidity)%"
+  print "Temperature: $(FixedPoint --decimals=1 driver.read_temperature)C"
+  print "Humidity: $(FixedPoint --decimals=1 driver.read_humidity)%"
 ```
 
 ## Features and bugs
