@@ -1,4 +1,4 @@
-import binary show BIG_ENDIAN
+import io show BIG_ENDIAN
 import serial
 import gpio
 

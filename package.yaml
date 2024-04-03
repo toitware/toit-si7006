@@ -1,2 +1,5 @@
 name: si7006
 description: A low level driver for the Si7006-A20 sensor.
+
+environment:
+  sdk: ^2.0.0-alpha.144
